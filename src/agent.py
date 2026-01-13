@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain.agents import create_agent
-from tools import get_releases, get_commits, get_user_repos
+from tools import get_releases, get_commits, get_user_repos, get_repo_tags, get_repo_contributors, export_changelog
 from langchain.messages import HumanMessage
 from rich.console import Console
 from rich.markdown import Markdown
@@ -27,7 +27,7 @@ def main():
 
     simple_agent = create_agent(
         model=llm,
-        tools=[get_releases, get_commits, get_user_repos],
+        tools=[get_releases, get_commits, get_user_repos, get_repo_tags, get_repo_contributors, export_changelog],
         system_prompt="You're a helpful assistant that can give the user information about GitHub repositories.",
     )
 

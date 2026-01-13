@@ -82,3 +82,52 @@ def get_user_repos(username: str) -> str:
     except Exception as e:
         return f"Error fetching user repositories: {str(e)}"
 
+@tool
+def get_repo_tags(owner: str, repo: str) -> str:
+    """Get tags for a GitHub repository. Returns formatted list of tags with name and commit SHA."""
+    url = f"https://api.github.com/repos/{owner}/{repo}/tags"
+    
+    try:
+        response = requests.get(url, headers=HEADERS)
+        response.raise_for_status()
+        tags = response.json()
+        
+        if not tags:
+            return "No tags found."
+        
+        result = []
+        for tag in tags:
+            result.append(f"- {tag['name']}: {tag['commit']['sha']}")
+        return "\n".join(result)
+    except Exception as e:
+        return f"Error fetching tags: {str(e)}"
+    
+@tool
+def get_repo_contributors(owner: str, repo: str) -> str:
+    """Get contributors for a GitHub repository. Returns formatted list of contributors with username and contributions count."""
+    url = f"https://api.github.com/repos/{owner}/{repo}/contributors"
+    
+    try:
+        response = requests.get(url, headers=HEADERS)
+        response.raise_for_status()
+        contributors = response.json()
+        
+        if not contributors:
+            return "No contributors found."
+        
+        result = []
+        for contributor in contributors:
+            result.append(f"- {contributor['login']}: {contributor['contributions']} contributions")
+        return "\n".join(result)
+    except Exception as e:
+        return f"Error fetching contributors: {str(e)}"
+    
+@tool
+def export_changelog(markdown_content: str, filename: str = "CHANGELOG.md") -> str:
+    """Export the given markdown content to a CHANGELOG.md file."""
+    try:
+        with open(filename, "w") as f:
+            f.write(markdown_content)
+        return f"Changelog exported to {filename}"
+    except Exception as e:
+        return f"Error exporting changelog: {str(e)}"
