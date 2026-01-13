@@ -3,6 +3,8 @@ import os
 from dotenv import load_dotenv
 from langchain_core.tools import tool
 from netra.decorators import task
+from netra import Netra, ActionModel
+import git
 
 load_dotenv()
 
@@ -135,7 +137,46 @@ def export_changelog(markdown_content: str, filename: str = "CHANGELOG.md") -> s
     try:
         with open(filename, "w") as f:
             f.write(markdown_content)
+        
+        with Netra.start_span("export_changelog") as span:
+            action = ActionModel(
+                action="file",
+                action_type="write",
+                success=True,
+                affected_records=[{
+                    "filename": filename,
+                    "content": markdown_content
+                }]
+            )
+            span.set_action([action])
+            span.set_success()
         return f"Changelog exported to {filename}"
     except Exception as e:
+        print(e)
         return f"Error exporting changelog: {str(e)}"
+
+@tool
+@task
+def get_current_user() -> str:
+    """Get the current git user name."""
+    try:
+        author_info = git.get_author_info()
+        if author_info and author_info["name"]:
+            return author_info["name"]
+        else:
+            return "Unknown User"
+    except Exception as e:
+        return f"Error fetching current user: {str(e)}"
     
+@tool
+@task
+def get_current_repo() -> str:
+    """Get the current git repository URL."""
+    try:
+        repo_url = git.get_current_repo()
+        if repo_url:
+            return repo_url
+        else:
+            return "No repository found."
+    except Exception as e:
+        return f"Error fetching current repository: {str(e)}"

@@ -2,11 +2,12 @@ import os
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain.agents import create_agent
-from tools import get_releases, get_commits, get_user_repos, get_repo_tags, get_repo_contributors, export_changelog
+from tools import get_releases, get_commits, get_user_repos, get_repo_tags, get_repo_contributors, export_changelog, get_current_repo, get_current_user
 from langchain.messages import HumanMessage, AIMessage
 from rich.console import Console
 from rich.markdown import Markdown
 from observability import initialize_netra, initialize_netra_session, record_agent_thought_process
+from typing import List
 
 load_dotenv()
 initialize_netra()
@@ -39,23 +40,23 @@ Filter traces using multiple span conditions with:
 * **Parentheses** to build complex queries and pinpoint the traces that matter
 """
 
+llm = ChatGroq(
+        api_key=GROQ_API_KEY,
+        model="openai/gpt-oss-120b"
+    )
+
+simple_agent = create_agent(
+    model=llm,
+    tools=[get_releases, get_commits, get_user_repos, get_repo_tags, get_repo_contributors, export_changelog, get_current_user, get_current_repo],
+    system_prompt=BASE_SYSTEM_PROMPT,
+)
+
 def pretty_print(markdown: str):
     console = Console()
     md = Markdown(markdown)
     console.print(md)
 
 def main():
-    llm = ChatGroq(
-        api_key=GROQ_API_KEY,
-        model="openai/gpt-oss-120b"
-    )
-
-    simple_agent = create_agent(
-        model=llm,
-        tools=[get_releases, get_commits, get_user_repos, get_repo_tags, get_repo_contributors, export_changelog],
-        system_prompt=BASE_SYSTEM_PROMPT,
-    )
-
     messages = []
 
     initialize_netra_session()

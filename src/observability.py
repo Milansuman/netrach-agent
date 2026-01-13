@@ -50,3 +50,4 @@ def record_agent_thought_process(messages: List[AIMessage | ToolMessage | HumanM
                     user_span.set_attribute("content", message.content)
 
         span.set_success()
+
