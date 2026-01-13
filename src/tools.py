@@ -2,6 +2,7 @@ import requests
 import os
 from dotenv import load_dotenv
 from langchain_core.tools import tool
+from netra.decorators import task
 
 load_dotenv()
 
@@ -14,6 +15,7 @@ HEADERS = {
 }
 
 @tool
+@task
 def get_releases(owner: str, repo: str) -> str:
     """Get releases for a GitHub repository. Returns formatted list of recent releases with name, tag, and publish date."""
     url = f"https://api.github.com/repos/{owner}/{repo}/releases"
@@ -34,6 +36,7 @@ def get_releases(owner: str, repo: str) -> str:
         return f"Error fetching releases: {str(e)}"
 
 @tool
+@task
 def get_commits(owner: str, repo: str, per_page: int = 30) -> str:
     """Get recent commits for a GitHub repository. Returns formatted list of commits with SHA, message, and author."""
     url = f"https://api.github.com/repos/{owner}/{repo}/commits"
@@ -60,8 +63,9 @@ def get_commits(owner: str, repo: str, per_page: int = 30) -> str:
         return "\n".join(result)
     except Exception as e:
         return f"Error fetching commits: {str(e)}"
-    
+  
 @tool
+@task
 def get_user_repos(username: str) -> str:
     """Get public repositories for a GitHub user. Returns formatted list of repository names and descriptions."""
     url = f"https://api.github.com/users/{username}/repos"
@@ -83,6 +87,7 @@ def get_user_repos(username: str) -> str:
         return f"Error fetching user repositories: {str(e)}"
 
 @tool
+@task
 def get_repo_tags(owner: str, repo: str) -> str:
     """Get tags for a GitHub repository. Returns formatted list of tags with name and commit SHA."""
     url = f"https://api.github.com/repos/{owner}/{repo}/tags"
@@ -103,6 +108,7 @@ def get_repo_tags(owner: str, repo: str) -> str:
         return f"Error fetching tags: {str(e)}"
     
 @tool
+@task
 def get_repo_contributors(owner: str, repo: str) -> str:
     """Get contributors for a GitHub repository. Returns formatted list of contributors with username and contributions count."""
     url = f"https://api.github.com/repos/{owner}/{repo}/contributors"
@@ -123,6 +129,7 @@ def get_repo_contributors(owner: str, repo: str) -> str:
         return f"Error fetching contributors: {str(e)}"
     
 @tool
+@task
 def export_changelog(markdown_content: str, filename: str = "CHANGELOG.md") -> str:
     """Export the given markdown content to a CHANGELOG.md file."""
     try:
