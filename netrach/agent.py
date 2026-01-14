@@ -1,13 +1,13 @@
 import os
+import argparse
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain.agents import create_agent
-from tools import get_releases, get_commits, get_user_repos, get_repo_tags, get_repo_contributors, export_changelog, get_current_repo, get_current_user
-from langchain.messages import HumanMessage, AIMessage
+from .tools import get_releases, get_commits, get_user_repos, get_repo_tags, get_repo_contributors, export_changelog, get_current_repo, get_current_user
+from langchain.messages import HumanMessage
 from rich.console import Console
 from rich.markdown import Markdown
-from observability import initialize_netra, initialize_netra_session, record_agent_thought_process
-from typing import List
+from .observability import initialize_netra, initialize_netra_session, record_agent_thought_process
 
 load_dotenv()
 initialize_netra()
@@ -56,7 +56,49 @@ def pretty_print(markdown: str):
     md = Markdown(markdown)
     console.print(md)
 
+def auto_generate_changelog(output_file: str = "CHANGELOG.md"):
+    """Automatically generate a changelog since the last release."""
+    print(f"Generating changelog since last release...")
+    
+    initialize_netra_session()
+    
+    # Create a query to generate changelog since last release
+    query = f"Generate a changelog for the current repository since the last release and save it to {output_file}"
+    
+    messages = [HumanMessage(content=query)]
+    
+    response = simple_agent.invoke({
+        "messages": messages,
+    })
+    
+    record_agent_thought_process(response["messages"], model="openai/gpt-oss-120b")
+    
+    pretty_print(response["messages"][-1].content)
+    print(f"\nChangelog generated successfully!")
+
 def main():
+    parser = argparse.ArgumentParser(
+        description="GitHub Changelog Generator - Generate changelogs for GitHub repositories"
+    )
+    parser.add_argument(
+        "--auto",
+        action="store_true",
+        help="Automatically generate changelog since the last release"
+    )
+    parser.add_argument(
+        "-f", "--file",
+        type=str,
+        default="CHANGELOG.md",
+        help="Output file path for the changelog (default: CHANGELOG.md)"
+    )
+    
+    args = parser.parse_args()
+    
+    if args.auto:
+        auto_generate_changelog(args.file)
+        return
+    
+    # Interactive mode
     messages = []
 
     initialize_netra_session()

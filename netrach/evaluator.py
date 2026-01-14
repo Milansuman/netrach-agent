@@ -3,7 +3,7 @@ Classes and decorators for custom evaluators in netra.
 """
 from dataclasses import dataclass
 import inspect
-from observability import initialize_netra
+from .observability import initialize_netra
 from netra import Netra, SpanType
 from langchain_ollama import OllamaEmbeddings
 from sklearn.metrics.pairwise import cosine_similarity

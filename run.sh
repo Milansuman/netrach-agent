@@ -1,2 +1,2 @@
 #!/bin/bash
-python3 src/agent.py
+python3 -m netrach.agent
