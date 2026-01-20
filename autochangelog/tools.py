@@ -2,8 +2,8 @@ import requests
 import os
 from dotenv import load_dotenv
 from langchain_core.tools import tool
-from netra.decorators import task
-from netra import Netra, ActionModel
+# from netra.decorators import task
+# from netra import Netra, ActionModel
 from autochangelog import git
 
 load_dotenv()
@@ -17,7 +17,7 @@ HEADERS = {
 }
 
 @tool
-@task
+# @task
 def get_releases(owner: str, repo: str) -> str:
     """Get releases for a GitHub repository. Returns formatted list of recent releases with name, tag, and publish date."""
     url = f"https://api.github.com/repos/{owner}/{repo}/releases"
@@ -38,7 +38,7 @@ def get_releases(owner: str, repo: str) -> str:
         return f"Error fetching releases: {str(e)}"
 
 @tool
-@task
+# @task
 def get_commits(owner: str, repo: str, per_page: int = 30) -> str:
     """Get recent commits for a GitHub repository. Returns formatted list of commits with SHA, message, and author."""
     url = f"https://api.github.com/repos/{owner}/{repo}/commits"
@@ -67,7 +67,7 @@ def get_commits(owner: str, repo: str, per_page: int = 30) -> str:
         return f"Error fetching commits: {str(e)}"
 
 @tool
-@task
+# @task
 def get_commits_between_releases(owner: str, repo: str, base: str, head: str) -> str:
     """Get commits between two releases/deployments (tags, branches, or commit SHAs). 
     
@@ -104,7 +104,7 @@ def get_commits_between_releases(owner: str, repo: str, base: str, head: str) ->
         return f"Error fetching commits between releases: {str(e)}"
   
 @tool
-@task
+# @task
 def get_user_repos(username: str) -> str:
     """Get public repositories for a GitHub user. Returns formatted list of repository names and descriptions."""
     url = f"https://api.github.com/users/{username}/repos"
@@ -126,7 +126,7 @@ def get_user_repos(username: str) -> str:
         return f"Error fetching user repositories: {str(e)}"
 
 @tool
-@task
+# @task
 def get_repo_tags(owner: str, repo: str) -> str:
     """Get tags for a GitHub repository. Returns formatted list of tags with name and commit SHA."""
     url = f"https://api.github.com/repos/{owner}/{repo}/tags"
@@ -147,7 +147,7 @@ def get_repo_tags(owner: str, repo: str) -> str:
         return f"Error fetching tags: {str(e)}"
     
 @tool
-@task
+# @task
 def get_repo_contributors(owner: str, repo: str) -> str:
     """Get contributors for a GitHub repository. Returns formatted list of contributors with username and contributions count."""
     url = f"https://api.github.com/repos/{owner}/{repo}/contributors"
@@ -168,7 +168,7 @@ def get_repo_contributors(owner: str, repo: str) -> str:
         return f"Error fetching contributors: {str(e)}"
     
 @tool
-@task
+# @task
 def export_changelog(markdown_content: str, filename: str = "CHANGELOG.md") -> str:
     """Export the given markdown content to a CHANGELOG.md file."""
     try:
@@ -178,25 +178,25 @@ def export_changelog(markdown_content: str, filename: str = "CHANGELOG.md") -> s
         with open(filename, "w") as f:
             f.write(markdown_content)
         
-        with Netra.start_span("export_changelog") as span:
-            action = ActionModel(
-                action="file",
-                action_type="write",
-                success=True,
-                affected_records=[{
-                    "filename": filename,
-                    "content": markdown_content
-                }]
-            )
-            span.set_action([action])
-            span.set_success()
+        # with Netra.start_span("export_changelog") as span:
+        #     action = ActionModel(
+        #         action="file",
+        #         action_type="write",
+        #         success=True,
+        #         affected_records=[{
+        #             "filename": filename,
+        #             "content": markdown_content
+        #         }]
+        #     )
+        #     span.set_action([action])
+        #     span.set_success()
         return f"Changelog exported to {filename}"
     except Exception as e:
         print(e)
         return f"Error exporting changelog: {str(e)}"
 
 @tool
-@task
+# @task
 def get_current_user() -> str:
     """Get the current git user name."""
     try:
@@ -209,7 +209,7 @@ def get_current_user() -> str:
         return f"Error fetching current user: {str(e)}"
     
 @tool
-@task
+# @task
 def get_current_repo() -> str:
     """Get the current git repository URL."""
     try:
