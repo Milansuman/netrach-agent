@@ -172,6 +172,9 @@ def get_repo_contributors(owner: str, repo: str) -> str:
 def export_changelog(markdown_content: str, filename: str = "CHANGELOG.md") -> str:
     """Export the given markdown content to a CHANGELOG.md file."""
     try:
+        # Ensure the directory exists
+        os.makedirs(os.path.dirname(filename) if os.path.dirname(filename) else ".", exist_ok=True)
+        
         with open(filename, "w") as f:
             f.write(markdown_content)
         

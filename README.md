@@ -20,7 +20,10 @@ then run `netrach` to use the utility.
 ```bash
 $ netrach # Starts the agent in interactive mode and maintains a chat log that ends when the session is exited
 $ netrach --auto # Automatically generates a CHANGELOG.md based on the commits for the latest release
-$ netrach --auto -f path/to/changelog.md # Asks the agent to save the changelog at the specify path
+$ netrach --auto -f path/to/changelog.md # Asks the agent to save the changelog at the specified path
+$ netrach --auto -r v1.2.3 # Generates a changelog for a specific release version
+$ netrach --auto --repo owner/repo # Generates a changelog for a specific repository
+$ netrach --auto -r v1.2.3 --repo owner/repo -f CHANGELOG.md # Combine all options
 ```
 
 ## Repo Setup 

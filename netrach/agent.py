@@ -31,6 +31,10 @@ GUIDELINES:
 - When getting the changelog of a release, always use the commits between the previous release and the given release.
 - If you don't know which user a repo belongs to, get the current user first.
 
+IMPORTANT:
+- Always generate changelogs that are relevant to the end user of the software. i.e. DO NOT talk about README changes or changes to config files unless it's relevant to the end user.
+- Always generate changelogs for the latest release unless specified otherwise by the user.
+
 EXAMPLE CHANGELOG:
 # Multi-Span Filters
 
@@ -68,20 +72,31 @@ def pretty_print(markdown: str):
     md = Markdown(markdown)
     console.print(md)
 
-def auto_generate_changelog(output_file: str = "CHANGELOG.md"):
+def auto_generate_changelog(output_file: str = "CHANGELOG.md", release_version: str = None, repository: str = None):
     """Automatically generate a changelog since the last release."""
-    print(f"Generating changelog since last release...")
+    
+    if release_version:
+        print(f"Generating changelog for release {release_version}...")
+    else:
+        print(f"Generating changelog since last release...")
     
     initialize_netra()
     initialize_netra_session()
     
-    # Create a query to generate changelog since last release
-    query = f"Generate a changelog for the current repository since the last release and save it to {output_file}."
+    # Create a query to generate changelog
+    if release_version:
+        query = f"Generate a changelog for release {release_version} and save it to {output_file}."
+    else:
+        query = f"Generate a changelog for the current repository since the last release and save it to {output_file}."
 
-    current_repo = get_current_repo()
+    if repository:
+        query += f" The repository is {repository}."
+    else:
+        current_repo = get_current_repo()
+        if current_repo:
+            query += f" The repository is at {current_repo}."
 
-    if current_repo:
-        query += f" The repository is at {current_repo}."
+    print(query)
     
     messages = [HumanMessage(content=query)]
     
@@ -110,11 +125,21 @@ def main():
         default="CHANGELOG.md",
         help="Output file path for the changelog (default: CHANGELOG.md)"
     )
+    parser.add_argument(
+        "-r", "--release",
+        type=str,
+        help="Specify the release version for the changelog (e.g., v1.2.3)"
+    )
+    parser.add_argument(
+        "--repo",
+        type=str,
+        help="Specify the repository (e.g., owner/repo)"
+    )
     
     args = parser.parse_args()
 
     if args.auto:
-        auto_generate_changelog(args.file)
+        auto_generate_changelog(args.file, args.release, args.repo)
         return
     
     # Interactive mode
