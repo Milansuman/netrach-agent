@@ -68,19 +68,11 @@ jobs:
           
           # Get the current release body
           RELEASE_ID=$(gh api repos/${{ github.repository }}/releases/tags/"$VERSION" --jq '.id')
-          CURRENT_BODY=$(gh api repos/${{ github.repository }}/releases/"$RELEASE_ID" --jq '.body')
-          
-          # Append changelog to release notes
-          NEW_BODY="${CURRENT_BODY}
-
-## Changelog
-
-${CHANGELOG_CONTENT}"
           
           # Update the release
           gh api repos/${{ github.repository }}/releases/"$RELEASE_ID" \
             -X PATCH \
-            -f body="$NEW_BODY"
+            -f body="$CHANGELOG_CONTENT"
 ```
 
 ### Required Secrets
