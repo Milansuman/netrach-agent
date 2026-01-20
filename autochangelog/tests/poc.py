@@ -1,5 +1,5 @@
-from netrach.evaluator import EvaluatorTestCase, main
-from netrach.agent import simple_agent
+from autochangelog.evaluator import EvaluatorTestCase, main
+from autochangelog.agent import simple_agent
 from langchain.messages import HumanMessage, ToolMessage
 
 class POCEvaluator(EvaluatorTestCase):

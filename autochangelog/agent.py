@@ -7,7 +7,7 @@ from .tools import *
 from langchain.messages import HumanMessage
 from rich.console import Console
 from rich.markdown import Markdown
-from .observability import initialize_netra, initialize_netra_session, record_agent_thought_process
+# from .observability import initialize_netra, initialize_netra_session, record_agent_thought_process
 from .git import get_current_repo
 
 load_dotenv()
@@ -92,8 +92,8 @@ def auto_generate_changelog(output_file: str = "CHANGELOG.md", release_version: 
     else:
         print(f"Generating changelog since last release...")
     
-    initialize_netra()
-    initialize_netra_session()
+    # initialize_netra()
+    # initialize_netra_session()
     
     # Create a query to generate changelog
     if release_version:
@@ -114,7 +114,7 @@ def auto_generate_changelog(output_file: str = "CHANGELOG.md", release_version: 
         "messages": messages,
     })
     
-    record_agent_thought_process(response["messages"], model="openai/gpt-oss-120b")
+    # record_agent_thought_process(response["messages"], model="openai/gpt-oss-120b")
     
     pretty_print(response["messages"][-1].content)
     print(f"\nChangelog generated successfully!")
@@ -155,8 +155,8 @@ def main():
     # Interactive mode
     messages = []
 
-    initialize_netra()
-    initialize_netra_session()
+    # initialize_netra()
+    # initialize_netra_session()
     while True:
         user_input = input(">>> Enter your query (or 'exit' to quit): ")
         if user_input.lower() == 'exit':
@@ -169,7 +169,7 @@ def main():
             "messages": messages,
         })
 
-        record_agent_thought_process(response["messages"], model="openai/gpt-oss-120b")
+        # record_agent_thought_process(response["messages"], model="openai/gpt-oss-120b")
 
         messages.append(response["messages"][-1])
         pretty_print(response["messages"][-1].content)

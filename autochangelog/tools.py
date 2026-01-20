@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from langchain_core.tools import tool
 from netra.decorators import task
 from netra import Netra, ActionModel
-from netrach import git
+from autochangelog import git
 
 load_dotenv()
 

@@ -2,7 +2,7 @@ from netra import Netra, SpanType
 import os
 from dotenv import load_dotenv
 import uuid
-from netrach import git
+from autochangelog import git
 from langchain.messages import AIMessage, ToolMessage, HumanMessage
 from typing import List
 

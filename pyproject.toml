@@ -3,9 +3,9 @@ requires = ["setuptools >= 77.0.3"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "netrach"
+name = "autochangelog"
 version = "0.1.0"
-description = "Netrach agent framework"
+description = "Automated changelog generation using LLMs and commit history analysis."
 readme = "README.md"
 requires-python = ">3.10"
 dependencies = [
@@ -21,8 +21,8 @@ authors = [{name = "Milansuman", email = "milansuman2016@gmail.com"}]
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["netrach*"]
-exclude = ["netrach.tests*"]
+include = ["autochangelog*"]
+exclude = ["autochangelog.tests*"]
 
 [project.scripts]
-netrach = "netrach.agent:main"
+autochangelog = "autochangelog.agent:main"
