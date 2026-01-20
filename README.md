@@ -40,7 +40,7 @@ jobs:
       - name: Generate Changelog
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           # Determine release version
           if [ -n "${{ github.event.inputs.version }}" ]; then
@@ -54,7 +54,7 @@ jobs:
 
       - name: Add Changelog to Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           # Determine release version
           if [ -n "${{ github.event.inputs.version }}" ]; then
@@ -80,15 +80,19 @@ jobs:
 Configure these secrets in your repository settings (Settings → Secrets and variables → Actions):
 
 - `GROQ_API_KEY`: Your Groq API key for AI-powered changelog generation
-- `GITHUB_TOKEN`: Automatically provided by GitHub Actions with write permissions to releases
+- `GH_TOKEN`: A GitHub Personal Access Token with the following permissions:
+  - **Contents**: Read and Write
+  
+  Note: GitHub doesn't allow secret names starting with `GITHUB_`, so we use `GH_TOKEN` instead.
+
 
 ### How It Works
 
 1. When you publish a new release on GitHub, the workflow is triggered automatically
 2. AutoChangeLog analyzes all commits and PRs since the previous release
-3. An AI-generated changelog is created with categorized changes
-4. The changelog is appended to your GitHub release notes
-5. Your release page now contains a comprehensive, readable changelog
+3. An AI-generated changelog is created with categorized changes and saved to a file
+4. The changelog content is set as your GitHub release notes
+5. Your release page now displays a comprehensive, AI-generated changelog
 
 ## Local Installation and Usage
 
