@@ -95,8 +95,6 @@ def auto_generate_changelog(output_file: str = "CHANGELOG.md", release_version: 
         current_repo = get_current_repo()
         if current_repo:
             query += f" The repository is at {current_repo}."
-
-    print(query)
     
     messages = [HumanMessage(content=query)]
     
