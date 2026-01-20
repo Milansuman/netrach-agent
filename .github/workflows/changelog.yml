@@ -29,7 +29,7 @@ jobs:
       - name: Generate Changelog
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           # Determine release version
           if [ -n "${{ github.event.inputs.version }}" ]; then
@@ -43,7 +43,7 @@ jobs:
 
       - name: Add Changelog to Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           # Determine release version
           if [ -n "${{ github.event.inputs.version }}" ]; then
