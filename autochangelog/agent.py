@@ -1,7 +1,7 @@
 import os
 import argparse
 # from dotenv import load_dotenv
-from langchain_groq import ChatGroq
+from langchain_litellm import ChatLiteLLM
 from langchain.agents import create_agent
 from .tools import *
 from langchain.messages import HumanMessage
@@ -12,10 +12,10 @@ from .git import get_current_repo
 
 # load_dotenv()
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+LITELLM_API_KEY = os.getenv("LITELLM_API_KEY")
 
-if not GROQ_API_KEY:
-    raise ValueError("GROQ_API_KEY environment variable is not set.")
+if not LITELLM_API_KEY:
+    raise ValueError("LITELLM_API_KEY environment variable is not set.")
 
 BASE_SYSTEM_PROMPT = f"""
 You are a helpful assistant that generates changelogs for GitHub repositories based on user queries.
@@ -30,10 +30,13 @@ GUIDELINES:
 - Always save files with the .md file extension, even if not explicitly mentioned by the user.
 - When getting the changelog of a release, always use the commits between the previous release and the given release.
 - If you don't know which user a repo belongs to, get the current user first.
+- When given multiple repositories by the user, combine the changelogs of both repositories into a single changelog, clearly indicating which changes belong to which repository.
 
 IMPORTANT:
 - Always generate changelogs that are relevant to the end user of the software. i.e. DO NOT talk about README changes or changes to config files unless it's relevant to the end user.
 - Always generate changelogs for the latest release unless specified otherwise by the user.
+- If the user asks you to save the changelog, you MUST save it to a .md file.
+- DO NOT include a description about the changelog generation process in the final output.
 
 EXAMPLES OF CHANGELOG POINTS NOT RELEVANT TO END USERS:
 - "Updated README to include setup instructions."
@@ -58,10 +61,11 @@ Filter traces using multiple span conditions with:
 * **Parentheses** to build complex queries and pinpoint the traces that matter
 """
 
-llm = ChatGroq(
-        api_key=GROQ_API_KEY,
-        model="openai/gpt-oss-120b"
-    )
+llm = ChatLiteLLM(
+    model="litellm_proxy/gpt-4o",
+    api_base="https://llm.keyvalue.systems",
+    api_key=LITELLM_API_KEY
+)
 
 simple_agent = create_agent(
     model=llm,
@@ -84,7 +88,7 @@ def pretty_print(markdown: str):
     md = Markdown(markdown)
     console.print(md)
 
-def auto_generate_changelog(output_file: str = "CHANGELOG.md", release_version: str = None, repository: str = None):
+def auto_generate_changelog(output_file: str = "CHANGELOG.md", release_version: str = None, repository: list = None):
     """Automatically generate a changelog since the last release."""
     
     if release_version:
@@ -102,13 +106,18 @@ def auto_generate_changelog(output_file: str = "CHANGELOG.md", release_version: 
         query = f"Generate a changelog for the current repository since the last release and save it to {output_file}."
 
     if repository:
-        query += f" The repository is {repository}."
+        if len(repository) > 1:
+            repos_str = ", ".join(repository)
+            query += f" The repositories are: {repos_str}."
+        else:
+            query += f" The repository is {repository[0]}."
     else:
         current_repo = get_current_repo()
         if current_repo:
             query += f" The repository is at {current_repo}."
     
     messages = [HumanMessage(content=query)]
+    print(query)
     
     response = simple_agent.invoke({
         "messages": messages,
@@ -143,7 +152,8 @@ def main():
     parser.add_argument(
         "--repo",
         type=str,
-        help="Specify the repository (e.g., owner/repo)"
+        nargs='+',
+        help="Specify one or more repositories (e.g., owner/repo1 owner/repo2)"
     )
     
     args = parser.parse_args()

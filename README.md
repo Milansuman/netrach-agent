@@ -39,7 +39,7 @@ jobs:
 
       - name: Generate Changelog
         env:
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          LITELLM_API_KEY: ${{ secrets.LITELLM_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           # Determine release version
@@ -79,7 +79,7 @@ jobs:
 
 Configure these secrets in your repository settings (Settings → Secrets and variables → Actions):
 
-- `GROQ_API_KEY`: Your Groq API key for AI-powered changelog generation
+- `LITELLM_API_KEY`: Your LiteLLM API key for AI-powered changelog generation
 - `GH_TOKEN`: A GitHub Personal Access Token with the following permissions:
   - **Contents**: Read and Write
   
@@ -107,7 +107,7 @@ pip install git+https://github.com/Milansuman/autochangelog.git
 Create a `.env` file with the following variables:
 
 ```env
-GROQ_API_KEY=your_groq_api_key
+LITELLM_API_KEY=your_litellm_api_key
 GITHUB_TOKEN=your_github_token
 ```
 
@@ -123,6 +123,9 @@ $ autochangelog --auto -r v1.2.3 --repo owner/repo
 # Generate changelog and save to file (optional)
 $ autochangelog --auto -r v1.2.3 --repo owner/repo -f CHANGELOG.md
 
+# Generate combined changelog for multiple repositories
+$ autochangelog --auto --repo owner/repo1 owner/repo2
+
 # Interactive mode - chat with the agent about your releases
 $ autochangelog
 ```
@@ -131,7 +134,7 @@ $ autochangelog
 
 **Generate changelog for your latest release:**
 ```bash
-export GROQ_API_KEY="your-api-key"
+export LITELLM_API_KEY="your-api-key"
 export GITHUB_TOKEN="your-github-token"
 autochangelog --auto --repo username/my-project
 ```
@@ -139,6 +142,11 @@ autochangelog --auto --repo username/my-project
 **Generate changelog for a specific release:**
 ```bash
 autochangelog --auto -r v2.0.0 --repo username/my-project
+```
+
+**Generate combined changelog for multiple repositories:**
+```bash
+autochangelog --auto --repo username/frontend username/backend
 ```
 
 ## Development Setup

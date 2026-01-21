@@ -4,14 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "autochangelog"
-version = "0.1.0"
+version = "0.1.1"
 description = "Automated changelog generation using LLMs and commit history analysis."
 readme = "README.md"
 requires-python = ">3.10"
 dependencies = [
   "requests==2.32.5",
   "langchain==1.2.3",
-  "langchain-groq==1.1.1",
+  "langchain-litellm",
   "rich==14.2.0"
 ]
 license = {text = "MIT"}
